@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Egg",
+    "protein_per_100g": 13,
+    "is_common": true,
+    "category": "animal"
+  },
+  {
+    "name": "Chicken Breast",
+    "protein_per_100g": 31,
+    "is_common": true,
+    "category": "animal"
+  },
+  {
+    "name": "Tofu",
+    "protein_per_100g": 8,
+    "is_common": true,
+    "category": "plant"
+  },
+  {
+    "name": "Tempeh",
+    "protein_per_100g": 19,
+    "is_common": true,
+    "category": "plant"
+  },
+  {
+    "name": "Greek Yogurt",
+    "protein_per_100g": 10,
+    "is_common": true,
+    "category": "animal"
+  },
+  {
+    "name": "Lentils",
+    "protein_per_100g": 9,
+    "is_common": true,
+    "category": "plant"
+  },
+  {
+    "name": "Beef (Lean)",
+    "protein_per_100g": 26,
+    "is_common": true,
+    "category": "animal"
+  },
+  {
+    "name": "Salmon",
+    "protein_per_100g": 20,
+    "is_common": true,
+    "category": "animal"
+  }
+]
