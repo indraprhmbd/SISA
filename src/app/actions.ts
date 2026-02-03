@@ -30,8 +30,8 @@ export async function parseIngredientsAction(
   imageBase64?: string,
   imageMimeType?: string,
 ): Promise<UserIngredient[]> {
-  // Reverting to 1.5 Flash for the best balance of stability, limits, and compatibility
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  // Switching to gemini-2.0-flash (stable) for Feb 2026
+  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
   const prompt = `You are a specialized ingredient extractor for SISA. Your goal is to extract a list of ingredients and their estimated weights in grams from the provided input.
   Rules:
