@@ -44,24 +44,52 @@ export default function IngredientInput({
   };
 
   const startVoiceInput = () => {
+    console.log("SISA: Starting voice input attempt...");
     const SpeechRecognition =
       (window as any).SpeechRecognition ||
       (window as any).webkitSpeechRecognition;
+
     if (!SpeechRecognition) {
+      console.error("SISA: SpeechRecognition not supported in this browser.");
       alert("Voice input not supported in this browser.");
       return;
     }
 
-    const recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
-    recognition.onstart = () => setIsProcessing(true);
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      setInput(transcript);
+    try {
+      const recognition = new SpeechRecognition();
+      // Support both English and Indonesian for broader hackathon appeal
+      recognition.lang = navigator.language.startsWith("id")
+        ? "id-ID"
+        : "en-US";
+      console.log(`SISA: Recognition lang set to ${recognition.lang}`);
+
+      recognition.onstart = () => {
+        console.log("SISA: Recognition started");
+        setIsProcessing(true);
+      };
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        console.log("SISA: Recognition result:", transcript);
+        setInput(transcript);
+        setIsProcessing(false);
+      };
+
+      recognition.onerror = (event: any) => {
+        console.error("SISA: Recognition error:", event.error);
+        setIsProcessing(false);
+      };
+
+      recognition.onend = () => {
+        console.log("SISA: Recognition ended");
+        setIsProcessing(false);
+      };
+
+      recognition.start();
+    } catch (err) {
+      console.error("SISA: Recognition failed to start:", err);
       setIsProcessing(false);
-    };
-    recognition.onerror = () => setIsProcessing(false);
-    recognition.start();
+    }
   };
 
   return (
