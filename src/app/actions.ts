@@ -85,8 +85,8 @@ export async function generateDecisionAction(
   const gapResult = analyzeProteinGap(currentProtein);
   const improvement = findImprovement(ingredients, gapResult);
 
-  // Reverting to 1.5 Flash for the best balance of stability, limits, and compatibility
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  // Switching to gemini-2.0-flash (stable) for Feb 2026
+  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
   const prompt = `You are a specialized menu composer for SISA. You must compose ONE simple menu and reasoning.
   
