@@ -27,11 +27,11 @@ export type ProcessedResult = {
  */
 export async function parseIngredientsAction(
   rawInput: string,
-  imageBuffer?: Buffer,
+  imageBase64?: string,
   imageMimeType?: string,
 ): Promise<UserIngredient[]> {
-  // Switching to 2.5 Flash for the best balance of stability, limits, and modern features
-  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+  // Reverting to 1.5 Flash for the best balance of stability, limits, and compatibility
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt = `You are a specialized ingredient extractor for SISA. Your goal is to extract a list of ingredients and their estimated weights in grams from the provided input.
   Rules:
@@ -44,12 +44,12 @@ export async function parseIngredientsAction(
 
   try {
     let result;
-    if (imageBuffer && imageMimeType) {
+    if (imageBase64 && imageMimeType) {
       result = await model.generateContent([
         prompt,
         {
           inlineData: {
-            data: imageBuffer.toString("base64"),
+            data: imageBase64,
             mimeType: imageMimeType,
           },
         },
@@ -85,8 +85,8 @@ export async function generateDecisionAction(
   const gapResult = analyzeProteinGap(currentProtein);
   const improvement = findImprovement(ingredients, gapResult);
 
-  // Switching to 2.5 Flash for the best balance of stability, limits, and modern features
-  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+  // Reverting to 1.5 Flash for the best balance of stability, limits, and compatibility
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt = `You are a specialized menu composer for SISA. You must compose ONE simple menu and reasoning.
   

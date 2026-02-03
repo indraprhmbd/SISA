@@ -24,9 +24,7 @@ export default function Home() {
   ) => {
     let detected;
     if (image) {
-      // Convert base64 data to Buffer for server action
-      const buffer = Buffer.from(image.data, "base64");
-      detected = await parseIngredientsAction(text, buffer, image.type);
+      detected = await parseIngredientsAction(text, image.data, image.type);
     } else {
       detected = await parseIngredientsAction(text);
     }
