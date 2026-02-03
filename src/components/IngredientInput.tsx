@@ -23,24 +23,88 @@ export default function IngredientInput({
     setIsProcessing(false);
   };
 
+  const compressImage = (
+    file: File,
+  ): Promise<{ data: string; type: string }> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const MAX_WIDTH = 1200;
+          const MAX_HEIGHT = 1200;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          // Compress to JPEG at 0.8 quality
+          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.8);
+          const commaIndex = compressedDataUrl.indexOf(",");
+          resolve({
+            data: compressedDataUrl.substring(commaIndex + 1),
+            type: "image/jpeg",
+          });
+        };
+        img.onerror = reject;
+      };
+      reader.onerror = reject;
+    });
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsProcessing(true);
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const base64Data = reader.result as string;
-      const commaIndex = base64Data.indexOf(",");
-      const data = base64Data.substring(commaIndex + 1);
+    console.log(`SISA: Compressing image: ${file.name} (${file.size} bytes)`);
+
+    try {
+      const { data, type } = await compressImage(file);
+      console.log(
+        `SISA: Image compressed. New approximate size: ${Math.round((data.length * 3) / 4)} bytes`,
+      );
 
       await onProcess("Image identified ingredients", {
         data,
-        type: file.type,
+        type,
       });
+    } catch (err) {
+      console.error("SISA: Image compression failed:", err);
+      // Fallback to original logic if compression fails, but it will likely hit the payload limit
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64Data = reader.result as string;
+        const commaIndex = base64Data.indexOf(",");
+        const data = base64Data.substring(commaIndex + 1);
+
+        await onProcess("Image identified ingredients", {
+          data,
+          type: file.type,
+        });
+      };
+      reader.readAsDataURL(file);
+    } finally {
       setIsProcessing(false);
-    };
-    reader.readAsDataURL(file);
+    }
   };
 
   const startVoiceInput = () => {
